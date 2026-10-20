@@ -1,0 +1,1098 @@
+/* ==========================================================================
+   URL2QR - Warm Sunshine & Dynamic Interactive Gradient System
+   ========================================================================== */
+
+:root {
+  /* Dynamic Mouse-driven Reactive Variables (Updated by JS) */
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --mouse-x-ratio: 0.5;
+  --mouse-y-ratio: 0.5;
+  
+  --dynamic-hue-1: 22;  /* Pale Orange Pastel */
+  --dynamic-hue-2: 18;  /* Soft Peach */
+  --dynamic-hue-3: 27;  /* Light Apricot */
+  --dynamic-hue-4: 20;  /* Warm Blush Orange */
+
+  /* Palette Tokens - Pale Orange Pastel */
+  --logo-yellow: #fbb016;
+  --logo-amber: #f97316;
+  --logo-gold: #fb923c;
+  --logo-black: #18181b;
+  --logo-black-soft: #27272a;
+
+  --primary: #f97316;
+  --primary-hover: #ea6010;
+  --primary-light: #fff7ed;
+  --primary-glow: rgba(249, 115, 22, 0.22);
+  
+  --accent-peach: #fdba74;
+  --accent-sunshine: #fed7aa;
+  
+  /* Pale Orange Pastel Background Base */
+  --bg-main: #fff8f3;
+  --bg-card: rgba(255, 255, 255, 0.88);
+  --bg-card-subtle: #fff1e8;
+  
+  --text-main: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #a1a1aa;
+  
+  --border-light: rgba(249, 115, 22, 0.22);
+  --border-subtle: rgba(229, 231, 235, 0.8);
+  --border-focus: #f97316;
+  
+  /* Premium Soft Pale Orange Shadows */
+  --shadow-sm: 0 1px 3px 0 rgba(234, 88, 12, 0.05);
+  --shadow-md: 0 4px 12px -2px rgba(234, 88, 12, 0.08), 0 2px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 12px 28px -4px rgba(234, 88, 12, 0.10), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 24px 48px -10px rgba(194, 65, 12, 0.13), 0 8px 16px -6px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 35px rgba(251, 146, 60, 0.28);
+
+  /* Transitions */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-normal: 0.35s;
+  --duration-smooth: 0.65s;
+
+  /* Typography */
+  --font-family: 'Pretendard', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Base Reset & Layout */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body.app-body {
+  font-family: var(--font-family);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   Interactive Background Mesh & Mouse-Driven Dynamic Gradient
+   ========================================================================== */
+
+.bg-gradient-mesh {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  background: 
+    radial-gradient(120% 120% at 50% 0%, 
+      hsl(var(--dynamic-hue-1), 100%, 95%) 0%, 
+      hsl(var(--dynamic-hue-2), 95%, 96%) 40%, 
+      hsl(var(--dynamic-hue-3), 90%, 97%) 100%);
+  transition: background 0.4s ease-out;
+}
+
+/* Mouse Follower Spotlight Glow */
+.cursor-glow-follower {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(calc(var(--mouse-x, 50vw) - 350px), calc(var(--mouse-y, 50vh) - 350px));
+  background: radial-gradient(
+    circle, 
+    hsla(var(--dynamic-hue-1), 90%, 72%, 0.30) 0%, 
+    hsla(var(--dynamic-hue-2), 85%, 78%, 0.15) 45%, 
+    transparent 70%
+  );
+  filter: blur(60px);
+  will-change: transform;
+  transition: transform 0.08s linear;
+}
+
+/* Atmospheric Floating Orbs (Responding dynamically to cursor) */
+.glow-sphere {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform;
+  opacity: 0.75;
+}
+
+.glow-1 {
+  width: 540px;
+  height: 540px;
+  top: -120px;
+  right: -80px;
+  background: radial-gradient(circle, hsla(var(--dynamic-hue-1), 95%, 72%, 0.38) 0%, hsla(var(--dynamic-hue-1), 95%, 72%, 0) 70%);
+  animation: floatOrb1 16s ease-in-out infinite alternate;
+}
+
+.glow-2 {
+  width: 600px;
+  height: 600px;
+  bottom: -150px;
+  left: -120px;
+  background: radial-gradient(circle, hsla(var(--dynamic-hue-2), 90%, 74%, 0.32) 0%, hsla(var(--dynamic-hue-2), 90%, 74%, 0) 70%);
+  animation: floatOrb2 20s ease-in-out infinite alternate-reverse;
+}
+
+.glow-3 {
+  width: 450px;
+  height: 450px;
+  top: 35%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, hsla(var(--dynamic-hue-3), 88%, 76%, 0.28) 0%, hsla(var(--dynamic-hue-3), 88%, 76%, 0) 70%);
+}
+
+.glow-4 {
+  width: 480px;
+  height: 480px;
+  top: 20%;
+  left: 10%;
+  background: radial-gradient(circle, hsla(var(--dynamic-hue-4), 90%, 80%, 0.24) 0%, transparent 70%);
+  animation: floatOrb1 24s ease-in-out infinite alternate;
+}
+
+@keyframes floatOrb1 {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(35px) scale(1.08); }
+  100% { transform: translateY(-25px) scale(0.96); }
+}
+
+@keyframes floatOrb2 {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-40px) scale(1.06); }
+  100% { transform: translateY(30px) scale(0.94); }
+}
+
+/* ==========================================================================
+   Header (Top-Left Logo with Warm Harmonious Styling)
+   ========================================================================== */
+
+.app-header {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  padding: 20px 36px;
+}
+
+.header-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 12px;
+  transition: transform 0.25s ease, filter 0.25s ease, box-shadow 0.25s ease;
+  background: #ffffff;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.15);
+}
+
+.brand-logo:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);
+}
+
+.brand-logo:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+}
+
+.logo-image {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 8px;
+}
+
+/* Navigation Tabs (QR코드 <-> URL단축) */
+.nav-tab-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 5px 6px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(249, 115, 22, 0.25);
+  box-shadow: 0 4px 16px rgba(234, 88, 12, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+}
+
+.nav-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--text-secondary);
+  transition: all 0.22s var(--ease-spring);
+  cursor: pointer;
+}
+
+.nav-tab-icon {
+  width: 17px;
+  height: 17px;
+  transition: transform 0.2s ease;
+}
+
+.nav-tab:hover {
+  color: var(--text-main);
+  background: rgba(254, 215, 170, 0.35);
+  transform: translateY(-1px);
+}
+
+.nav-tab:hover .nav-tab-icon {
+  transform: scale(1.1);
+}
+
+.nav-tab.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.32), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #9a3412;
+  background: rgba(255, 237, 213, 0.88);
+  border: 1.5px solid rgba(249, 115, 22, 0.30);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.08);
+}
+
+.badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.22);
+  animation: pulseAmber 2s infinite;
+}
+
+@keyframes pulseAmber {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.9); }
+}
+
+/* ==========================================================================
+   Main Stage & Positioning Architecture
+   ========================================================================== */
+
+.main-stage {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 90px);
+}
+
+/* ==========================================================================
+   URL Input Section (Center -> Bottom Dock Transition)
+   ========================================================================== */
+
+.url-input-section {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 680px;
+  padding: 0 16px;
+  z-index: 25;
+  transition: 
+    transform var(--duration-smooth) var(--ease-spring),
+    top var(--duration-smooth) var(--ease-spring),
+    max-width var(--duration-smooth) var(--ease-spring);
+  will-change: transform, top;
+}
+
+.input-panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Hero Intro Typography */
+.hero-intro {
+  text-align: center;
+  margin-bottom: 30px;
+  transition: 
+    opacity 0.35s ease,
+    max-height 0.45s ease,
+    margin-bottom 0.4s ease,
+    transform 0.35s ease;
+  max-height: 220px;
+  overflow: hidden;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #c2410c;
+  background: rgba(255, 237, 213, 0.92);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  padding: 5px 14px;
+  border-radius: 9999px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.06);
+}
+
+.sparkle-icon {
+  font-size: 0.95rem;
+}
+
+.hero-title {
+  font-size: 2.35rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.035em;
+  line-height: 1.25;
+  margin-bottom: 12px;
+}
+
+.highlight-text {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  display: inline-block;
+}
+
+.hero-subtitle {
+  font-size: 1.08rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Form & Input Capsule with Warm Glassmorphism */
+.url-form {
+  width: 100%;
+}
+
+.input-capsule {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1.8px solid rgba(249, 115, 22, 0.35);
+  border-radius: 9999px;
+  padding: 8px 10px 8px 18px;
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  backdrop-filter: blur(16px);
+  transition: 
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s ease,
+    background-color 0.25s ease;
+}
+
+.input-capsule:focus-within {
+  border-color: var(--primary);
+  background: #ffffff;
+  box-shadow: 0 16px 36px -4px rgba(249, 115, 22, 0.22), 0 0 0 4px rgba(255, 237, 213, 0.88);
+  transform: translateY(-2px);
+}
+
+.input-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c2410c;
+  margin-right: 12px;
+  flex-shrink: 0;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.input-capsule:focus-within .input-icon-box {
+  color: var(--primary-hover);
+  transform: scale(1.08);
+}
+
+.link-svg {
+  width: 22px;
+  height: 22px;
+}
+
+.url-input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--text-main);
+  outline: none;
+  padding: 0 8px;
+}
+
+.url-input::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Clear Input Button */
+.clear-input-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-right: 6px;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.clear-input-btn:hover {
+  color: var(--text-main);
+  background-color: var(--bg-card-subtle);
+}
+
+.clear-input-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Submit Confirmation Button (Jet Black with Gold Glow matching Logo Accent) */
+.submit-btn {
+  background: var(--logo-black);
+  color: var(--logo-gold);
+  border: 1.5px solid var(--logo-black-soft);
+  border-radius: 9999px;
+  height: 46px;
+  padding: 0 24px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 16px 0 rgba(24, 24, 27, 0.35);
+  transition: 
+    transform 0.18s ease,
+    box-shadow 0.2s ease,
+    background 0.25s ease,
+    color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.submit-btn:hover {
+  background: #000000;
+  color: #ffffff;
+  box-shadow: 0 6px 20px 0 rgba(24, 24, 27, 0.45), 0 0 15px rgba(251, 191, 36, 0.3);
+  transform: translateY(-1px);
+}
+
+.submit-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px 0 rgba(24, 24, 27, 0.25);
+}
+
+.submit-arrow-icon {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.2s ease;
+}
+
+.submit-btn:hover .submit-arrow-icon {
+  transform: translateX(3px);
+}
+
+/* Feedback message */
+.form-feedback {
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-top: 8px;
+  padding: 0 20px;
+  min-height: 20px;
+  transition: all 0.2s ease;
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.form-feedback.is-error {
+  color: #dc2626;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Bottom Extras (Reset button) */
+.dock-extras {
+  display: none;
+  margin-top: 10px;
+}
+
+.reset-link-btn {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #9a3412;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-sm);
+  transition: color 0.2s, background-color 0.2s, transform 0.2s;
+}
+
+.reset-link-btn:hover {
+  color: #c2410c;
+  background-color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.reset-link-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ==========================================================================
+   STATE TRANSITION: Generated State (.has-qr)
+   ========================================================================== */
+
+.has-qr .url-input-section {
+  top: auto;
+  bottom: 24px;
+  transform: translate(-50%, 0);
+  max-width: 620px;
+}
+
+.has-qr .hero-intro {
+  opacity: 0;
+  max-height: 0;
+  margin-bottom: 0;
+  transform: translateY(-15px);
+  pointer-events: none;
+}
+
+.has-qr .input-capsule {
+  padding: 6px 8px 6px 16px;
+  box-shadow: var(--shadow-xl), 0 0 25px rgba(249, 115, 22, 0.20);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(249, 115, 22, 0.38);
+}
+
+.has-qr .url-input {
+  height: 42px;
+  font-size: 0.95rem;
+}
+
+.has-qr .submit-btn {
+  height: 42px;
+  padding: 0 20px;
+  font-size: 0.92rem;
+}
+
+.has-qr .dock-extras {
+  display: flex;
+}
+
+/* ==========================================================================
+   QR Result Section (Dead-Center Display)
+   ========================================================================== */
+
+.qr-result-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 120px;
+  z-index: 15;
+  opacity: 1;
+  transform: scale(1);
+  transition: 
+    opacity 0.45s ease-out,
+    transform 0.5s var(--ease-spring),
+    display 0.45s allow-discrete;
+  transition-behavior: allow-discrete;
+}
+
+@starting-style {
+  .qr-result-section {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+}
+
+.qr-result-section[hidden] {
+  display: none;
+  opacity: 0;
+  transform: scale(0.9) translateY(20px);
+}
+
+.qr-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 380px;
+  width: 100%;
+}
+
+/* The Clickable QR Card */
+.qr-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 24px;
+  border: 1.5px solid rgba(249, 115, 22, 0.30);
+  box-shadow: var(--shadow-xl), 0 0 35px rgba(251, 146, 60, 0.12);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  transition: 
+    transform 0.28s var(--ease-spring),
+    box-shadow 0.28s ease,
+    border-color 0.25s ease;
+  user-select: none;
+  outline: none;
+}
+
+.qr-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 50px -8px rgba(194, 65, 12, 0.18), 0 0 40px rgba(251, 146, 60, 0.28);
+  border-color: var(--primary);
+}
+
+.qr-card:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 4px;
+}
+
+.qr-card:active {
+  transform: translateY(-2px) scale(0.99);
+}
+
+/* Card Header */
+.qr-card-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 18px;
+  padding: 0 4px;
+}
+
+.qr-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #10b981;
+  margin-right: 8px;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  animation: pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.92); }
+}
+
+.qr-card-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+  flex: 1;
+}
+
+.qr-card-format-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #9a3412;
+  background-color: #ffedd5;
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+/* QR Code Box & Hover Overlay */
+.qr-code-box {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 12px;
+  border: 1.5px solid rgba(249, 115, 22, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.05);
+}
+
+.qrcode-render-target {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qrcode-render-target canvas,
+.qrcode-render-target img {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Hover Overlay Layer (Warm Translucent Glass with Yellow-Amber Accent) */
+.qr-hover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(24, 24, 27, 0.82);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  border-radius: 18px;
+}
+
+.qr-card:hover .qr-hover-overlay {
+  opacity: 1;
+}
+
+.overlay-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #ffffff;
+  transform: translateY(6px);
+  transition: transform 0.25s var(--ease-spring);
+}
+
+.qr-card:hover .overlay-content {
+  transform: translateY(0);
+}
+
+.overlay-icon-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.50);
+  animation: bounceDown 1.8s infinite;
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+.download-icon {
+  width: 24px;
+  height: 24px;
+  stroke: #ffffff;
+}
+
+.overlay-text {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+/* Card Footer */
+.qr-card-footer {
+  width: 100%;
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.url-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 4px 12px;
+  background-color: var(--bg-card-subtle);
+  border: 1px solid rgba(249, 115, 22, 0.22);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: #7c2d12;
+}
+
+.preview-link-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--primary);
+}
+
+.url-display-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 240px;
+  font-family: 'Plus Jakarta Sans', monospace, sans-serif;
+  font-weight: 600;
+}
+
+.click-hint {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #c2410c;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.hint-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* QR Actions Row */
+.qr-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.action-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1.5px solid rgba(249, 115, 22, 0.25);
+  background: #ffffff;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.action-btn:hover {
+  background: #ffffff;
+  color: var(--text-main);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.action-btn:active {
+  transform: translateY(1px);
+}
+
+.download-direct-btn {
+  background: rgba(255, 237, 213, 0.92);
+  border-color: rgba(249, 115, 22, 0.30);
+  color: #9a3412;
+}
+
+.download-direct-btn:hover {
+  background: var(--logo-black);
+  color: #fb923c;
+  border-color: var(--logo-black);
+}
+
+.btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ==========================================================================
+   Toast Notifications
+   ========================================================================== */
+
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--logo-black);
+  color: #ffffff;
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  padding: 12px 18px;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  font-size: 0.92rem;
+  font-weight: 600;
+  transform: translateY(-12px);
+  opacity: 0;
+  transition: transform 0.3s var(--ease-spring), opacity 0.3s ease;
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast.success .toast-icon {
+  color: #fb923c;
+}
+
+.toast-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .app-header {
+    padding: 14px 20px;
+  }
+
+  .logo-image {
+    height: 32px;
+  }
+
+  .main-stage {
+    padding: 0 16px;
+    min-height: calc(100vh - 70px);
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .input-capsule {
+    padding: 6px 6px 6px 14px;
+  }
+
+  .url-input {
+    height: 42px;
+    font-size: 0.92rem;
+  }
+
+  .submit-btn {
+    height: 40px;
+    padding: 0 16px;
+    font-size: 0.88rem;
+  }
+
+  .qr-code-box {
+    width: 220px;
+    height: 220px;
+  }
+
+  .qr-card {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .qr-result-section {
+    margin-bottom: 110px;
+  }
+
+  .has-qr .url-input-section {
+    bottom: 16px;
+  }
+
+  .toast-container {
+    top: 16px;
+    right: 16px;
+    left: 16px;
+  }
+
+  .toast {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
